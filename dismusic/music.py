@@ -8,7 +8,8 @@ from wavelink import (LavalinkException, LoadTrackError, SoundCloudTrack,
                       YouTubeMusicTrack, YouTubePlaylist, YouTubeTrack)
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
-
+from discord import (Color, Embed, Forbidden, HTTPException, InvalidArgument,
+                     NotFound)
 from ._classes import Provider
 from .checks import voice_channel_player, voice_connected
 from .errors import MustBeSameChannel
@@ -43,7 +44,7 @@ class Music(commands.Cog):
         }
 
         query = query.strip("<>")
-        msg = await ctx.send(f"> Searching for `{query}`")
+        msg = await ctx.send(embed=Embed(color=discord.Colour(0x2f3136), description=f"> Searching for `{query}`"))
 
         track_provider = provider if provider else player.track_provider
 
@@ -72,18 +73,18 @@ class Music(commands.Cog):
                 continue
 
         if not tracks:
-            return await msg.edit(embed=discord.Embed(color=discord.Colour(0x2f3136), description="<:auroraCross:979611376819503125> | No song, track found with given query."))
+            return await msg.edit(embed=Embed(color=discord.Colour(0x2f3136), description="<:auroraCross:979611376819503125> | No song, track found with given query."))
 
         if isinstance(tracks, YouTubePlaylist):
             tracks = tracks.tracks
             for track in tracks:
                 await player.queue.put(track)
 
-            await msg.edit(embed=discord.Embed(color=discord.Colour(0x2f3136), description=f"<:auroraTick:979611139203825675> | Added `{len(tracks)}` songs to queue. "))
+            await msg.edit(embed=Embed(color=discord.Colour(0x2f3136), description=f"<:auroraTick:979611139203825675> | Added `{len(tracks)}` songs to queue. "))
         else:
             track = tracks[0]
 
-            await msg.edit(embed=discord.Embed(color=discord.Colour(0x2f3136), description=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. "))
+            await msg.edit(embed=Embed(color=discord.Colour(0x2f3136), description=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. "))
             await player.queue.put(track)
 
         if not player.is_playing():
