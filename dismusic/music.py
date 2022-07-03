@@ -84,7 +84,7 @@ class Music(commands.Cog):
         else:
             track = tracks[0]
 
-            await msg.edit(embed=Embed(color=discord.Colour(0x2f3136), description=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. "))
+            await msg.edit(embed=Embed(color=Color(0x2f3136), description=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. "))
             await player.queue.put(track)
 
         if not player.is_playing():
