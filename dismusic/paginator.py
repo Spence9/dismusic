@@ -28,7 +28,7 @@ class Paginator:
         embed = Embed(color=Color(0x2F3136))
         embed.set_author(
             name="Queue",
-            icon_url="https://cdn.discordapp.com/attachments/776345413132877854/940247400046542948/list.png",
+            icon_url="https://images-ext-2.discordapp.net/external/gz6QANWZhvLUE7X55OZn_q_oRpe6ydyID7tj6gtVFSA/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/983608716102352969/1dc824eb958462f06f17cc4f97dcc409.png",
         )
 
         if self.player.loop == Loop.CURRENT:
