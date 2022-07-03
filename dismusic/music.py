@@ -31,7 +31,7 @@ class Music(commands.Cog):
 
         if ctx.author.voice.channel.id != player.channel.id:
             raise MustBeSameChannel(
-                "You must be in the same voice channel as the player."
+                "<:auroraCross:979611376819503125> | You must be in the same voice channel as the bot."
             )
 
         track_providers = {
@@ -43,7 +43,7 @@ class Music(commands.Cog):
         }
 
         query = query.strip("<>")
-        msg = await ctx.send(f"Searching for `{query}` :mag_right:")
+        msg = await ctx.send(f"> Searching for `{query}`")
 
         track_provider = provider if provider else player.track_provider
 
@@ -72,18 +72,18 @@ class Music(commands.Cog):
                 continue
 
         if not tracks:
-            return await msg.edit("No song/track found with given query.")
+            return await msg.edit("<:auroraCross:979611376819503125> | No song, track found with given query.")
 
         if isinstance(tracks, YouTubePlaylist):
             tracks = tracks.tracks
             for track in tracks:
                 await player.queue.put(track)
 
-            await msg.edit(content=f"Added `{len(tracks)}` songs to queue. ")
+            await msg.edit(content=f"<:auroraTick:979611139203825675> | Added `{len(tracks)}` songs to queue. ")
         else:
             track = tracks[0]
 
-            await msg.edit(content=f"Added `{track.title}` to queue. ")
+            await msg.edit(content=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. ")
             await player.queue.put(track)
 
         if not player.is_playing():
@@ -102,31 +102,31 @@ class Music(commands.Cog):
                     **config,
                     spotify_client=spotify.SpotifyClient(**spotify_credential),
                 )
-                print(f"[dismusic] INFO - Created node: {node.identifier}")
+                print(f"Created node: {node.identifier}")
             except Exception:
                 print(
                     f"[dismusic] ERROR - Failed to create node {config['host']}:{config['port']}"
                 )
 
-    @commands.command(aliases=["con"])
+    @commands.command(aliases=["join"])
     @voice_connected()
     async def connect(self, ctx: commands.Context):
         """Connect the player"""
         if ctx.voice_client:
             return
 
-        msg = await ctx.send(f"Connecting to **`{ctx.author.voice.channel}`**")
+        msg = await ctx.send(f"> Connecting to {ctx.author.voice.channel}")
 
         try:
             player: DisPlayer = await ctx.author.voice.channel.connect(cls=DisPlayer)
             self.bot.dispatch("dismusic_player_connect", player)
         except (asyncio.TimeoutError, ClientException):
-            return await msg.edit(content="Failed to connect to voice channel.")
+            return await msg.edit(content="<:auroraCross:979611376819503125> | Failed to connect to voice channel.")
 
         player.bound_channel = ctx.channel
         player.bot = self.bot
 
-        await msg.edit(content=f"Connected to **`{player.channel.name}`**")
+        await msg.edit(content=f"<:auroraTick:979611139203825675> | Connected to {player.channel.name}")
 
     @commands.group(aliases=["p"], invoke_without_command=True)
     @voice_connected()
@@ -170,13 +170,13 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         if vol < 0:
-            return await ctx.send("Volume can't be less than 0")
+            return await ctx.send("<:auroraCross:979611376819503125> | Volume can't be less than 0.")
 
         if vol > 100 and not forced:
-            return await ctx.send("Volume can't greater than 100")
+            return await ctx.send("<:auroraCross:979611376819503125> | Volume can't greater than 100.")
 
         await player.set_volume(vol)
-        await ctx.send(f"Volume set to {vol} :loud_sound:")
+        await ctx.send(f"<:auroraTick:979611139203825675> | Volume set to {vol}.")
 
     @commands.command(aliases=["disconnect", "dc"])
     @voice_channel_player()
@@ -185,7 +185,7 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         await player.destroy()
-        await ctx.send("Stopped the player :stop_button: ")
+        await ctx.send("<:auroraTick:979611139203825675> | Stopped.")
         self.bot.dispatch("dismusic_player_stop", player)
 
     @commands.command()
@@ -196,13 +196,13 @@ class Music(commands.Cog):
 
         if player.is_playing():
             if player.is_paused():
-                return await ctx.send("Player is already paused.")
+                return await ctx.send("<:auroraCross:979611376819503125> | Already paused.")
 
             await player.set_pause(pause=True)
             self.bot.dispatch("dismusic_player_pause", player)
-            return await ctx.send("Paused :pause_button: ")
+            return await ctx.send("<:auroraTick:979611139203825675> | Paused.")
 
-        await ctx.send("Player is not playing anything.")
+        await ctx.send("<:auroraCross:979611376819503125> | Not playing anything.")
 
     @commands.command()
     @voice_channel_player()
@@ -212,13 +212,13 @@ class Music(commands.Cog):
 
         if player.is_playing():
             if not player.is_paused():
-                return await ctx.send("Player is already playing.")
+                return await ctx.send("<:auroraCross:979611376819503125> | Already playing.")
 
             await player.set_pause(pause=False)
             self.bot.dispatch("dismusic_player_resume", player)
-            return await ctx.send("Resumed :musical_note: ")
+            return await ctx.send("<:auroraTick:979611139203825675> | Resumed. ")
 
-        await ctx.send("Player is not playing anything.")
+        await ctx.send("<:auroraCross:979611376819503125> | Not playing anything.")
 
     @commands.command()
     @voice_channel_player()
@@ -232,7 +232,7 @@ class Music(commands.Cog):
         await player.stop()
 
         self.bot.dispatch("dismusic_track_skip", player)
-        await ctx.send("Skipped :track_next:")
+        await ctx.send("<:auroraTick:979611139203825675> | Skipped.")
 
     @commands.command()
     @voice_channel_player()
@@ -244,16 +244,16 @@ class Music(commands.Cog):
             old_position = player.position
             position = old_position + seconds
             if position > player.source.length:
-                return await ctx.send("Can't seek past the end of the track.")
+                return await ctx.send("<:auroraCross:979611376819503125> | Can't seek past the end of the track.")
 
             if position < 0:
                 position = 0
 
             await player.seek(position * 1000)
             self.bot.dispatch("dismusic_player_seek", player, old_position, position)
-            return await ctx.send(f"Seeked {seconds} seconds :fast_forward: ")
+            return await ctx.send(f"<:auroraTick:979611139203825675> | Seeked {seconds} seconds ")
 
-        await ctx.send("Player is not playing anything.")
+        await ctx.send("<:auroraCross:979611376819503125> | Not playing anything.")
 
     @commands.command()
     @voice_channel_player()
@@ -262,7 +262,7 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         result = await player.set_loop(loop_type)
-        await ctx.send(f"Loop has been set to {result} :repeat: ")
+        await ctx.send(f"<:auroraTick:979611139203825675> | Loop has been set to {result}.")
 
     @commands.command(aliases=["q"])
     @voice_channel_player()
@@ -271,7 +271,7 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         if len(player.queue._queue) < 1:
-            return await ctx.send("Nothing is in the queue.")
+            return await ctx.send("<:auroraCross:979611376819503125> | Nothing is in the queue.")
 
         paginator = Paginator(ctx, player)
         await paginator.start()
