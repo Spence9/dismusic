@@ -47,7 +47,7 @@ class DisPlayer(Player):
 
     async def set_loop(self, loop_type: str) -> None:
         if not self.is_playing():
-            raise NothingIsPlaying("Player is not playing any track. Can't loop")
+            raise NothingIsPlaying("<:auroraCross:979611376819503125> | Not playing any track. Can't loop")
 
         if not loop_type:
             if Loop.TYPES.index(self.loop) >= 2:
@@ -60,11 +60,11 @@ class DisPlayer(Player):
 
         if loop_type.upper() == "PLAYLIST" and len(self.queue._queue) < 1:
             raise NotEnoughSong(
-                "There must be 2 songs in the queue in order to use the PLAYLIST loop"
+                "<:auroraCross:979611376819503125> | There must be 2 songs in the queue in order to use the PLAYLIST loop"
             )
 
         if loop_type.upper() not in Loop.TYPES:
-            raise InvalidLoopMode("Loop type must be `NONE`, `CURRENT` or `PLAYLIST`.")
+            raise InvalidLoopMode("<:auroraCross:979611376819503125> | Loop type must be `NONE`, `CURRENT` or `PLAYLIST`.")
 
         self.loop = loop_type.upper()
 
@@ -74,7 +74,7 @@ class DisPlayer(Player):
         track = self.source
 
         if not track:
-            raise NothingIsPlaying("Player is not playing anything.")
+            raise NothingIsPlaying("<:auroraCross:979611376819503125>| Player is not playing anything.")
 
         embed = discord.Embed(
             title=track.title, url=track.uri, color=discord.Color(0x2F3136)
@@ -88,13 +88,12 @@ class DisPlayer(Player):
             embed.set_thumbnail(url=track.thumb)
         except AttributeError:
             embed.set_thumbnail(
-                url="https://cdn.discordapp.com/attachments/776345413132877854/940540758442795028/unknown.png"
-            )
+                url="https://images-ext-2.discordapp.net/external/gz6QANWZhvLUE7X55OZn_q_oRpe6ydyID7tj6gtVFSA/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/983608716102352969/1dc824eb958462f06f17cc4f97dcc409.png"            )
         embed.add_field(
-            name="Length",
+            name="Duration",
             value=f"{int(track.length // 60)}:{int(track.length % 60)}",
         )
-        embed.add_field(name="Looping", value=self.loop)
+        embed.add_field(name="Loop", value=self.loop)
         embed.add_field(name="Volume", value=self.volume)
 
         next_song = ""
