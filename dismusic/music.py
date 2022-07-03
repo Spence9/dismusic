@@ -72,18 +72,18 @@ class Music(commands.Cog):
                 continue
 
         if not tracks:
-            return await msg.edit("<:auroraCross:979611376819503125> | No song, track found with given query.")
+            return await msg.edit(embed=discord.Embed(color=discord.Colour(0x2f3136), description="<:auroraCross:979611376819503125> | No song, track found with given query."))
 
         if isinstance(tracks, YouTubePlaylist):
             tracks = tracks.tracks
             for track in tracks:
                 await player.queue.put(track)
 
-            await msg.edit(content=f"<:auroraTick:979611139203825675> | Added `{len(tracks)}` songs to queue. ")
+            await msg.edit(embed=discord.Embed(color=discord.Colour(0x2f3136), description=f"<:auroraTick:979611139203825675> | Added `{len(tracks)}` songs to queue. "))
         else:
             track = tracks[0]
 
-            await msg.edit(content=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. ")
+            await msg.edit(embed=discord.Embed(color=discord.Colour(0x2f3136), description=f" <:auroraTick:979611139203825675> | Added `{track.title}` to queue. "))
             await player.queue.put(track)
 
         if not player.is_playing():
